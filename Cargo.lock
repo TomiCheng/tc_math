@@ -517,6 +517,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0bcfe3e4732defe64408b706121575a0fdbd7011a3647566cd0a353daf64c165"
 
 [[package]]
+name = "tc_digest"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1c37ed9f10c96ccd2c46a9a2b872070772c6385621665f4ba076b6d779e6be6f"
+
+[[package]]
 name = "tc_modular"
 version = "0.1.0"
 dependencies = [
@@ -524,6 +530,28 @@ dependencies = [
  "num-traits",
  "tc_bigint",
  "tc_constant_time",
+ "tc_zeroize",
+]
+
+[[package]]
+name = "tc_prime"
+version = "0.1.0"
+dependencies = [
+ "num-traits",
+ "rand_core",
+ "tc_bigint",
+ "tc_digest",
+ "tc_modular",
+ "tc_sha",
+]
+
+[[package]]
+name = "tc_sha"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2210d651adb5c6d7e72c787dfba177646f72954475eaf8b665a42c1ae06708cb"
+dependencies = [
+ "tc_digest",
  "tc_zeroize",
 ]
 

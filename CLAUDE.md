@@ -75,6 +75,17 @@ holds it to the same timing rules as `tc_bigint`. It depends on
 `num-traits`, `tc_bigint`, `tc_constant_time` and `tc_zeroize` with or
 without `alloc`.
 
+`tc_prime` holds `Primality` and, behind the `shawe-taylor` feature,
+`ShaweTaylor`, after Bouncy Castle's `Primes`, with its names for the
+results: `MrOutput`, `StOutput` and `StError`. Both traits cover
+`FixedBigUint<N>` and, with `alloc`, `PaddedBigUint` and `BigUint`. Every
+test and generator is variable time, as Bouncy Castle's are, and each one
+says so; its `tests/constant_time.rs` checks that. The caller gives the
+`rand_core` generator, and the crate holds no source of randomness of its
+own. `rand_core` is a default dependency here, and it turns on the
+`rand_core` feature of `tc_bigint`. `shawe-taylor` adds `tc_digest` and
+turns on `alloc`; its tests use `tc_sha` as a dev-dependency.
+
 `unsafe` code is forbidden at every crate root.
 
 Rust 1.85 is guaranteed for every build. Besides `tc_*` crates, the libraries
