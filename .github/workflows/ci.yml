@@ -104,7 +104,7 @@ jobs:
       - run: cargo clippy --locked --all-targets --all-features -- -D warnings
       - run: cargo doc --locked --no-deps
       - run: cargo doc --locked --no-deps --all-features
-      - run: cargo package --locked -p tc_bigint -p tc_modular
+      - run: cargo package --locked -p tc_bigint -p tc_modular -p tc_prime
         env:
           # Keep unpacked package manifests outside rust-cache's build tree.
           CARGO_TARGET_DIR: ${{ runner.temp }}/package
@@ -142,4 +142,8 @@ jobs:
             check 'num-traits rand_core tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target" --all-features
             check 'num-traits tc_bigint tc_constant_time tc_modular tc_zeroize' -p tc_modular --target "$target"
             check 'num-traits tc_bigint tc_constant_time tc_modular tc_zeroize' -p tc_modular --target "$target" --features alloc
+            check 'num-traits rand_core tc_bigint tc_constant_time tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target"
+            check 'num-traits rand_core tc_bigint tc_constant_time tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --features alloc
+            check 'num-traits rand_core tc_bigint tc_constant_time tc_digest tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --features shawe-taylor
+            check 'num-traits rand_core tc_bigint tc_constant_time tc_digest tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --all-features
           done
