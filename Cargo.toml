@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["tc_bigint"]
+members = ["tc_bigint", "tc_modular"]
 
 [workspace.package]
 edition = "2024"
