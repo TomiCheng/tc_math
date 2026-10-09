@@ -59,10 +59,26 @@ working values an operation gives up; the values they return are the
 caller's to wipe, and none of them has a `Drop` of its own. `Debug` on `Limb`
 never prints the word.
 
-`unsafe` code is forbidden at the crate root.
+`tc_modular` builds on the public interface of `tc_bigint` alone, reading
+values through their limbs, and keeps the limb arithmetic it needs to
+itself. The `Mod*` traits take operands of any size and a `NonZero`
+modulus of either parity. The Montgomery parameters and forms take an `Odd`
+one: `FixedMontyForm` holds its own copy of the parameters, while the padded
+and big forms borrow theirs. `ModPow` goes through Montgomery form for an
+odd modulus and multiplies on the residues for an even one. `ModInverse`
+uses safegcd for an odd modulus and the binary extended GCD for an even one.
+The parity of the modulus therefore picks the path and shows in the timing,
+and whether an inverse exists shows in the `Option`. Everything else over
+the fixed-width and padded integers is constant time. Over `BigUint`, going
+in and out of a form is variable time. Its own `tests/constant_time.rs`
+holds it to the same timing rules as `tc_bigint`. It depends on
+`num-traits`, `tc_bigint`, `tc_constant_time` and `tc_zeroize` with or
+without `alloc`.
 
-Rust 1.85 is guaranteed for every build. Besides `tc_*` crates, the library
-depends on `num-traits` and, behind its feature, `rand_core`, and both build
+`unsafe` code is forbidden at every crate root.
+
+Rust 1.85 is guaranteed for every build. Besides `tc_*` crates, the libraries
+depend on `num-traits` and, behind a feature, `rand_core`, and both build
 on 1.85; dev-dependencies such as `criterion` are exempt. The MSRV job
 therefore runs `cargo check` on 1.85 with and without features; tests run on
 stable. `.cargo/config.toml` sets `incompatible-rust-versions = "allow"` so
@@ -100,7 +116,7 @@ doctests carry the executable examples, and CI runs `cargo doc` with
 feature-gated items break the build without that feature, so name them in plain
 code spans. An additive public API change belongs in the crate README's
 contract lists — "Types", "Traits" and "Features" in
-`tc_bigint/README.md` — and in the changelog, not only in the code.
+each crate's `README.md` — and in the changelog, not only in the code.
 
 Work happens on `feat/*` branches off `develop`; pull requests target `develop`,
 which merges to `main`. Commit messages use an imperative subject and a wrapped

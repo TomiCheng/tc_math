@@ -104,7 +104,7 @@ jobs:
       - run: cargo clippy --locked --all-targets --all-features -- -D warnings
       - run: cargo doc --locked --no-deps
       - run: cargo doc --locked --no-deps --all-features
-      - run: cargo package --locked -p tc_bigint
+      - run: cargo package --locked -p tc_bigint -p tc_modular
         env:
           # Keep unpacked package manifests outside rust-cache's build tree.
           CARGO_TARGET_DIR: ${{ runner.temp }}/package
@@ -140,4 +140,6 @@ jobs:
             check 'num-traits tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target" --features alloc
             check 'num-traits rand_core tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target" --features rand_core
             check 'num-traits rand_core tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target" --all-features
+            check 'num-traits tc_bigint tc_constant_time tc_modular tc_zeroize' -p tc_modular --target "$target"
+            check 'num-traits tc_bigint tc_constant_time tc_modular tc_zeroize' -p tc_modular --target "$target" --features alloc
           done
