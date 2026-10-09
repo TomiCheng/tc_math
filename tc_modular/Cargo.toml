@@ -1,0 +1,34 @@
+[package]
+name = "tc_modular"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Modular arithmetic and Montgomery forms for cryptography over the integers of tc_bigint, constant time over the fixed-width and padded ones."
+readme = "README.md"
+documentation = "https://docs.rs/tc_modular"
+keywords = ["modular", "montgomery", "bigint", "cryptography", "no-std"]
+categories = ["cryptography", "mathematics", "no-std"]
+include = ["src/**", "tests/**", "benches/**", "README.md", "BENCHES.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+default = []
+alloc = ["tc_bigint/alloc", "tc_zeroize/alloc"]
+
+[dependencies]
+num-traits = { version = "0.2.19", default-features = false }
+tc_bigint = { version = "0.1.0", path = "../tc_bigint" }
+tc_constant_time = "0.1.0"
+tc_zeroize = "0.1.0"
+
+[dev-dependencies]
+criterion = "0.8.2"
+
+[[bench]]
+name = "modular"
+harness = false
+required-features = ["alloc"]
