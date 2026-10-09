@@ -1,1 +1,64 @@
 # tc_math
+
+A Rust workspace for the integer arithmetic that cryptography builds on: big
+integers in fixed-width, padded and arbitrary-precision forms, modular and
+Montgomery arithmetic over them, constant time for secret values, and
+primality testing and prime generation. Each crate is published separately
+and keeps its own README and changelog.
+
+[![CI](https://github.com/TomiCheng/tc_math/actions/workflows/ci.yml/badge.svg)](https://github.com/TomiCheng/tc_math/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](#license)
+![rustc](https://img.shields.io/badge/rustc-1.85+-blue.svg)
+
+## Crates
+
+| Crate | Version | Description |
+| --- | --- | --- |
+| [`tc_bigint`](tc_bigint) | [![crates.io](https://img.shields.io/crates/v/tc_bigint.svg)](https://crates.io/crates/tc_bigint) [![docs.rs](https://docs.rs/tc_bigint/badge.svg)](https://docs.rs/tc_bigint) | Big integers in three kinds, each unsigned and signed: `FixedBigUint<N>` and `FixedBigInt<N>` on the stack, `PaddedBigUint` and `PaddedBigInt` at a width chosen at run time, and `BigUint` and `BigInt` at arbitrary precision. `no_std`, no `unsafe`; the heap types are behind a default-off `alloc` feature and random integers behind `rand_core`. The fixed-width and padded types are constant time; the big ones are variable time, for public values. |
+| [`tc_modular`](tc_modular) | [![crates.io](https://img.shields.io/crates/v/tc_modular.svg)](https://crates.io/crates/tc_modular) [![docs.rs](https://docs.rs/tc_modular/badge.svg)](https://docs.rs/tc_modular) | Modular arithmetic over the unsigned integers of `tc_bigint`: the `ModAdd`, `ModSub`, `ModMul`, `ModPow` and `ModInverse` traits over a `NonZero` modulus, and Montgomery parameters and forms for an `Odd` one, in fixed, padded and big forms. `no_std`, no `unsafe`; the padded and big forms are behind a default-off `alloc` feature. Constant time over the fixed-width and padded integers, apart from the parity of the modulus and whether an inverse exists. |
+| [`tc_prime`](tc_prime) | [![crates.io](https://img.shields.io/crates/v/tc_prime.svg)](https://crates.io/crates/tc_prime) [![docs.rs](https://docs.rs/tc_prime/badge.svg)](https://docs.rs/tc_prime) | Primality testing and prime generation over the unsigned integers of `tc_bigint`, after Bouncy Castle's `Primes`: trial division, Miller-Rabin and the enhanced test of FIPS 186-4 through the `Primality` trait, and, behind a default-off `shawe-taylor` feature, provable primes by FIPS 186-4 C.6 through `ShaweTaylor`. `no_std`, no `unsafe`; `alloc` adds the padded and big integers. Variable time throughout, as Bouncy Castle's is. |
+
+## Requirements
+
+Rust 1.85 or later, edition 2024. Every crate builds without `std` and
+reaches the heap only through its default-off `alloc` feature.
+
+Rust 1.85 is the earliest compiler for edition 2024, and it is guaranteed for
+every build. Besides `tc_*` crates, the libraries depend only on `num-traits`
+and, behind a feature, `rand_core`, both of which build on 1.85;
+dev-dependencies used only by tests and benchmarks are exempt. The workspace
+lock tracks the latest dependency releases, so CI on stable tests what a user
+on a current toolchain resolves.
+
+## Workspace checks
+
+```text
+cargo test --locked
+cargo test --locked --all-features
+cargo fmt --all -- --check
+cargo clippy --locked --all-targets --all-features -- -D warnings
+cargo doc --locked --no-deps --all-features
+```
+
+CI additionally runs these on Linux x64, i686 and ARM64, macOS ARM64, and
+Windows x64, checks the `wasm32-unknown-unknown` and `aarch64-unknown-none`
+targets and each crate's dependency set on each target, checks the build on
+Rust 1.85.0, and verifies the package archive. See
+[.github/workflows/ci.yml](.github/workflows/ci.yml).
+
+Before a release, check each archive and run publication validation from a
+committed checkout:
+
+```text
+cargo package -p <crate> --list --locked
+cargo publish -p <crate> --dry-run --locked
+```
+
+The archive must include both license texts, the crate README, the changelog,
+the source, the integration tests and the benchmarks with their results, and
+no `target/` or other build artifacts.
+
+## License
+
+Licensed under either the [MIT license](LICENSE-MIT) or the
+[Apache License, Version 2.0](LICENSE-APACHE), at your option.
