@@ -39,6 +39,8 @@ let three = FixedMontyForm::new(&U256::from(3u8), params);
 assert_eq!(three.pow(&(&p - 1u32)).retrieve(), U256::from(1u8));
 ```
 
+Benchmarks of the three kinds are in [BENCHES.md](BENCHES.md).
+
 ## Security
 
 Over the fixed-width and padded integers everything is constant time, except
