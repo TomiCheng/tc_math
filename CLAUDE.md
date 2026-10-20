@@ -86,7 +86,24 @@ own. `rand_core` is a default dependency here, and it turns on the
 `rand_core` feature of `tc_bigint`. `shawe-taylor` adds `tc_digest` and
 turns on `alloc`; its tests use `tc_sha` as a dev-dependency.
 
-`unsafe` code is forbidden at every crate root.
+`tc_binpoly` holds the binary polynomials of GF(2^n), after Bouncy Castle's
+`BinPoly`: `BinField` names the field by a trinomial or pentanomial modulus
+and picks its multiplication and squaring backends once for the CPU;
+`FixedBinPoly<N>` holds a reduced polynomial in `N` limbs on the stack and,
+with `alloc`, `PaddedBinPoly` on the heap. On x86 the product is by
+PCLMULQDQ, through Bouncy Castle's kernels for one to ten limbs and Karatsuba
+above, and the square by BMI2's PDEP; elsewhere Bouncy Castle's scalar
+kernels serve, whose product indexes a table by operand bits, the
+cache-timing side channel each doc discloses. Working buffers stay on the
+stack up to 64 limbs, so without `alloc` the degree stops at 4096; with it,
+at 2^20. It depends on `tc_constant_time`, `tc_zeroize` and, on x86 only,
+`tc_runtime`, and its own `tests/constant_time.rs` holds it to the same
+timing rules.
+
+`unsafe` code is forbidden at every crate root, except in `tc_binpoly`, which
+denies it at the root and allows it only in its x86 modules, for the
+intrinsics; each is called behind a `tc_runtime` proof that the CPU has the
+instruction. Keep any new `unsafe` to such a module, with a `SAFETY` comment.
 
 Rust 1.85 is guaranteed for every build. Besides `tc_*` crates, the libraries
 depend on `num-traits` and, behind a feature, `rand_core`, and both build
