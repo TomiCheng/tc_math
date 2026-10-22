@@ -1,0 +1,28 @@
+[package]
+name = "tc_f2m_curve"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Binary-field short-Weierstrass elliptic curves over GF(2^m) for cryptography: a constant-time ladder, variable-time wNAF and tau-adic NAF, and the SEC named curves."
+readme = "README.md"
+documentation = "https://docs.rs/tc_f2m_curve"
+keywords = ["elliptic-curve", "ecc", "binary-field", "cryptography", "no-std"]
+categories = ["cryptography", "mathematics", "no-std"]
+include = ["src/**", "tests/**", "README.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+default = []
+# sect113r1, sect113r2, sect131r1 and sect131r2: weak, for interoperability only.
+small-curves = []
+
+[dependencies]
+tc_bigint = { version = "0.1.0", path = "../tc_bigint", features = ["alloc"] }
+tc_binpoly = { version = "0.1.0", path = "../tc_binpoly", features = ["alloc"] }
+tc_constant_time = "0.1.0"
+tc_ec_core = { version = "0.1.0", path = "../tc_ec_core" }
+tc_zeroize = "0.1.0"
