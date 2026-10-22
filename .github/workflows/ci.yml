@@ -104,7 +104,7 @@ jobs:
       - run: cargo clippy --locked --all-targets --all-features -- -D warnings
       - run: cargo doc --locked --no-deps
       - run: cargo doc --locked --no-deps --all-features
-      - run: cargo package --locked -p tc_binpoly -p tc_bigint -p tc_modular -p tc_prime
+      - run: cargo package --locked -p tc_binpoly -p tc_bigint -p tc_modular -p tc_prime -p tc_ec_core -p tc_fp_curve -p tc_f2m_curve -p tc_fp_custom -p tc_f2m_custom
         env:
           # Keep unpacked package manifests outside rust-cache's build tree.
           CARGO_TARGET_DIR: ${{ runner.temp }}/package
@@ -134,12 +134,15 @@ jobs:
               exit 1
             fi
           }
-          # Only tc_binpoly has a platform-specific dependency: tc_runtime, on x86.
+          # tc_binpoly and tc_f2m_custom take tc_runtime on x86, and tc_f2m_curve
+          # through tc_binpoly; nothing else depends on the platform.
           for target in aarch64-unknown-none wasm32-unknown-unknown x86_64-unknown-linux-gnu i686-unknown-linux-gnu; do
             case "$target" in
-              x86_64-* | i686-*) binpoly='tc_binpoly tc_constant_time tc_runtime tc_zeroize' ;;
-              *) binpoly='tc_binpoly tc_constant_time tc_zeroize' ;;
+              x86_64-* | i686-*) runtime='tc_runtime' ;;
+              *) runtime='' ;;
             esac
+            binpoly="tc_binpoly tc_constant_time $runtime tc_zeroize"
+            ec='num-traits tc_bigint tc_constant_time tc_ec_core tc_zeroize'
             check "$binpoly" -p tc_binpoly --target "$target"
             check "$binpoly" -p tc_binpoly --target "$target" --features alloc
             check 'num-traits tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target"
@@ -152,4 +155,13 @@ jobs:
             check 'num-traits rand_core tc_bigint tc_constant_time tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --features alloc
             check 'num-traits rand_core tc_bigint tc_constant_time tc_digest tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --features shawe-taylor
             check 'num-traits rand_core tc_bigint tc_constant_time tc_digest tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --all-features
+            check "$ec" -p tc_ec_core --target "$target"
+            check "$ec tc_fp_curve tc_modular" -p tc_fp_curve --target "$target"
+            check "$ec tc_fp_curve tc_modular" -p tc_fp_curve --target "$target" --all-features
+            check "$ec tc_f2m_curve tc_binpoly $runtime" -p tc_f2m_curve --target "$target"
+            check "$ec tc_f2m_curve tc_binpoly $runtime" -p tc_f2m_curve --target "$target" --all-features
+            check "$ec tc_fp_custom" -p tc_fp_custom --target "$target"
+            check "$ec tc_fp_custom" -p tc_fp_custom --target "$target" --all-features
+            check "$ec tc_f2m_custom $runtime" -p tc_f2m_custom --target "$target"
+            check "$ec tc_f2m_custom $runtime" -p tc_f2m_custom --target "$target" --all-features
           done

@@ -28,7 +28,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The crate list and workspace-wide checks live in the root
 [README.md](README.md); read it rather than restating it here. Every crate is
-`no_std` and needs no allocator by default.
+`no_std`. The integer and polynomial crates need no allocator by default; the
+elliptic-curve crates, `tc_ec_core`, `tc_fp_curve`, `tc_f2m_curve`,
+`tc_fp_custom` and `tc_f2m_custom`, always need one, as their tables and
+`PaddedBigUint` live on the heap.
 
 `tc_bigint` holds big integers in three kinds, each unsigned and signed:
 `FixedBigUint<N>` and `FixedBigInt<N>` of `N` limbs on the stack,
@@ -100,10 +103,35 @@ at 2^20. It depends on `tc_constant_time`, `tc_zeroize` and, on x86 only,
 `tc_runtime`, and its own `tests/constant_time.rs` holds it to the same
 timing rules.
 
-`unsafe` code is forbidden at every crate root, except in `tc_binpoly`, which
-denies it at the root and allows it only in its x86 modules, for the
-intrinsics; each is called behind a `tc_runtime` proof that the CPU has the
-instruction. Keep any new `unsafe` to such a module, with a `SAFETY` comment.
+`tc_ec_core` holds the traits elliptic curves implement, `Curve`, `Point`,
+`FieldElement`, `PrimeFieldElement`, `BinaryFieldElement` and `Scalar`, and
+the algorithms generic over them, after Bouncy Castle's
+`Org.BouncyCastle.Math.EC`: wNAF, the GLV split, the window τ-adic NAF and, in
+`multiplier`, `BaseMultiplier` for a base fixed at construction, with
+`PerCall` and Bouncy Castle's fixed-point comb as `CombCt` and `CombVar`. The
+curve-specific maps the algorithms need, GLV's φ and the Frobenius τ, come
+from the caller. It depends on `tc_bigint` with `alloc` and on
+`tc_constant_time`.
+
+The curve crates come in two layers. `tc_fp_curve` and `tc_f2m_curve` take the
+field at run time, on `tc_modular`'s Montgomery forms and `tc_binpoly`'s
+polynomials. `tc_fp_custom` and `tc_f2m_custom` repeat Bouncy Castle's `SecP*`
+and `SecT*` classes with each field fixed at compile time, for speed alone,
+and their `BENCHES.md` measures the gain. Each curve crate offers two complete
+sets of types and the caller picks one: Ct, whose multiplication is constant
+time, by complete formulas and a fixed window on prime curves and by a
+Montgomery ladder on binary ones, where the other group operations stay
+variable time; and Var, variable time and only for public values, by wNAF,
+GLV on the k1 curves and the τ-adic NAF on Koblitz curves. Each also gives
+`BaseMultiplier` implementations that keep its own tables. Weak curves sit
+behind a default-off `small-curves` feature. The field elements wipe
+themselves on drop, unlike the integers of `tc_bigint`. Each crate's own
+`tests/constant_time.rs` holds it to the same timing rules as `tc_bigint`.
+
+`unsafe` code is forbidden at every crate root, except in `tc_binpoly` and
+`tc_f2m_custom`, which deny it at the root and allow it only in their x86
+modules, for the intrinsics; each is called behind a `tc_runtime` proof that
+the CPU has the instruction. Keep any new `unsafe` to such a module, with a `SAFETY` comment.
 
 Rust 1.85 is guaranteed for every build. Besides `tc_*` crates, the libraries
 depend on `num-traits` and, behind a feature, `rand_core`, and both build
