@@ -2,7 +2,7 @@
 
 All notable changes to `tc_ec_core` are documented in this file.
 
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-10-22
 
 Initial release.
 
