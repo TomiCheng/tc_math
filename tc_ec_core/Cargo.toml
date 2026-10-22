@@ -1,0 +1,20 @@
+[package]
+name = "tc_ec_core"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Elliptic-curve traits and algorithms for cryptography: the curve, point and field-element traits, wNAF, GLV, tau-adic NAF and fixed-base comb multiplication."
+readme = "README.md"
+documentation = "https://docs.rs/tc_ec_core"
+keywords = ["elliptic-curve", "ecc", "cryptography", "no-std"]
+categories = ["cryptography", "mathematics", "no-std"]
+include = ["src/**", "tests/**", "README.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+tc_bigint = { version = "0.1.0", path = "../tc_bigint", features = ["alloc"] }
+tc_constant_time = "0.1.0"

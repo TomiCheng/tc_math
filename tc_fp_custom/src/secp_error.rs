@@ -1,0 +1,29 @@
+use core::fmt;
+
+/// A coordinate that a SEC prime curve cannot take.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SecPError {
+    /// An encoded element is not the field's length.
+    InvalidLength {
+        /// The field's length in bytes.
+        expected: usize,
+        /// The length given.
+        actual: usize,
+    },
+    /// A coordinate is not below p.
+    NotBelowModulus,
+}
+
+/// Constant time; the lengths are public.
+impl fmt::Display for SecPError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::InvalidLength { expected, actual } => {
+                write!(f, "expected {expected} bytes, got {actual}")
+            }
+            Self::NotBelowModulus => f.write_str("a value is not below the modulus"),
+        }
+    }
+}
+
+impl core::error::Error for SecPError {}

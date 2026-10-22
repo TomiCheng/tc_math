@@ -3,8 +3,9 @@
 A Rust workspace for the integer arithmetic that cryptography builds on: big
 integers in fixed-width, padded and arbitrary-precision forms, modular and
 Montgomery arithmetic over them, constant time for secret values, primality
-testing and prime generation, and the binary polynomials of GF(2^n). Each crate is published separately
-and keeps its own README and changelog.
+testing and prime generation, the binary polynomials of GF(2^n), and the
+elliptic curves over prime and binary fields that these carry. Each crate is
+published separately and keeps its own README and changelog.
 
 [![CI](https://github.com/TomiCheng/tc_math/actions/workflows/ci.yml/badge.svg)](https://github.com/TomiCheng/tc_math/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](#license)
@@ -18,11 +19,17 @@ and keeps its own README and changelog.
 | [`tc_bigint`](tc_bigint) | [![crates.io](https://img.shields.io/crates/v/tc_bigint.svg)](https://crates.io/crates/tc_bigint) [![docs.rs](https://docs.rs/tc_bigint/badge.svg)](https://docs.rs/tc_bigint) | Big integers in three kinds, each unsigned and signed: `FixedBigUint<N>` and `FixedBigInt<N>` on the stack, `PaddedBigUint` and `PaddedBigInt` at a width chosen at run time, and `BigUint` and `BigInt` at arbitrary precision. `no_std`, no `unsafe`; the heap types are behind a default-off `alloc` feature and random integers behind `rand_core`. The fixed-width and padded types are constant time; the big ones are variable time, for public values. |
 | [`tc_modular`](tc_modular) | [![crates.io](https://img.shields.io/crates/v/tc_modular.svg)](https://crates.io/crates/tc_modular) [![docs.rs](https://docs.rs/tc_modular/badge.svg)](https://docs.rs/tc_modular) | Modular arithmetic over the unsigned integers of `tc_bigint`: the `ModAdd`, `ModSub`, `ModMul`, `ModPow` and `ModInverse` traits over a `NonZero` modulus, and Montgomery parameters and forms for an `Odd` one, in fixed, padded and big forms. `no_std`, no `unsafe`; the padded and big forms are behind a default-off `alloc` feature. Constant time over the fixed-width and padded integers, apart from the parity of the modulus and whether an inverse exists. |
 | [`tc_prime`](tc_prime) | [![crates.io](https://img.shields.io/crates/v/tc_prime.svg)](https://crates.io/crates/tc_prime) [![docs.rs](https://docs.rs/tc_prime/badge.svg)](https://docs.rs/tc_prime) | Primality testing and prime generation over the unsigned integers of `tc_bigint`, after Bouncy Castle's `Primes`: trial division, Miller-Rabin and the enhanced test of FIPS 186-4 through the `Primality` trait, and, behind a default-off `shawe-taylor` feature, provable primes by FIPS 186-4 C.6 through `ShaweTaylor`. `no_std`, no `unsafe`; `alloc` adds the padded and big integers. Variable time throughout, as Bouncy Castle's is. |
+| [`tc_ec_core`](tc_ec_core) | [![crates.io](https://img.shields.io/crates/v/tc_ec_core.svg)](https://crates.io/crates/tc_ec_core) [![docs.rs](https://docs.rs/tc_ec_core/badge.svg)](https://docs.rs/tc_ec_core) | The traits and algorithms shared by elliptic curves, after Bouncy Castle's `Org.BouncyCastle.Math.EC`: `Curve`, `Point` and the field-element traits, wNAF, GLV and τ-adic NAF multiplication, and `BaseMultiplier` for a fixed base, with Bouncy Castle's fixed-point comb. `no_std` with `alloc`, no `unsafe`. Each item states its timing; the generic multiplications are variable time, for public scalars, except the constant-time comb. |
+| [`tc_fp_curve`](tc_fp_curve) | [![crates.io](https://img.shields.io/crates/v/tc_fp_curve.svg)](https://crates.io/crates/tc_fp_curve) [![docs.rs](https://docs.rs/tc_fp_curve/badge.svg)](https://docs.rs/tc_fp_curve) | Prime-field short-Weierstrass curves on Montgomery arithmetic from `tc_modular`, in two sets: Ct, constant time by complete formulas and a fixed window, and Var, variable time by wNAF and GLV, for public values. Named P-256 and secp256k1, and three weak curves behind `small-curves`. `no_std` with `alloc`, no `unsafe`. |
+| [`tc_f2m_curve`](tc_f2m_curve) | [![crates.io](https://img.shields.io/crates/v/tc_f2m_curve.svg)](https://crates.io/crates/tc_f2m_curve) [![docs.rs](https://docs.rs/tc_f2m_curve/badge.svg)](https://docs.rs/tc_f2m_curve) | Binary-field short-Weierstrass curves over GF(2^m) on `tc_binpoly`, in two sets: Ct, whose multiplication is a constant-time ladder, and Var, variable time by wNAF and the τ-adic NAF on Koblitz curves. The 18 SEC 2 binary curves, four of them weak and behind `small-curves`. `no_std` with `alloc`, no `unsafe`. |
+| [`tc_fp_custom`](tc_fp_custom) | [![crates.io](https://img.shields.io/crates/v/tc_fp_custom.svg)](https://crates.io/crates/tc_fp_custom) [![docs.rs](https://docs.rs/tc_fp_custom/badge.svg)](https://docs.rs/tc_fp_custom) | The SEC prime curves and SM2 with each field fixed at compile time, after Bouncy Castle's `SecP*` classes, about three times faster than `tc_fp_curve`: Solinas and Mersenne reductions, safegcd inversion, and the same Ct and Var sets. `no_std` with `alloc`, no `unsafe`; four weak curves behind `small-curves`. |
+| [`tc_f2m_custom`](tc_f2m_custom) | [![crates.io](https://img.shields.io/crates/v/tc_f2m_custom.svg)](https://crates.io/crates/tc_f2m_custom) [![docs.rs](https://docs.rs/tc_f2m_custom/badge.svg)](https://docs.rs/tc_f2m_custom) | The SEC binary curves with each field fixed at compile time, after Bouncy Castle's `SecT*` classes, five times faster than `tc_f2m_curve`: written-out reductions, products by PCLMULQDQ and squares by PDEP on x86, and the same Ct and Var sets. `no_std` with `alloc`; `unsafe` only for the x86 intrinsics; four weak curves behind `small-curves`. |
 
 ## Requirements
 
-Rust 1.85 or later, edition 2024. Every crate builds without `std` and
-reaches the heap only through its default-off `alloc` feature.
+Rust 1.85 or later, edition 2024. Every crate builds without `std`. The
+integer and polynomial crates reach the heap only through their default-off
+`alloc` feature; the elliptic-curve crates always need an allocator.
 
 Rust 1.85 is the earliest compiler for edition 2024, and it is guaranteed for
 every build. Besides `tc_*` crates, the libraries depend only on `num-traits`
