@@ -2,6 +2,25 @@
 
 All notable changes to `tc_fp_curve` are documented in this file.
 
+## 0.1.1 - Unreleased
+
+### Added
+
+- The named prime-field curves of Bouncy Castle's other tables, as
+  `FpNamedCurve` constants in `named_curves`: the Brainpool curves of
+  RFC 5639, `BRAINPOOLP160R1` to `BRAINPOOLP512T1`; the GOST R 34.10 curves
+  of RFC 4357 and RFC 7836, whose twelve names come to seven parameter sets;
+  X9.62's `PRIME192V2`, `PRIME192V3` and `PRIME239V1` to `PRIME239V3`;
+  ANSSI's `FRP256V1`; and WAPI's `WAPIP192V1`, with its alias `WAPI192V1`.
+  None is below 160 bits, so none is behind `small-curves`.
+- A test that each holds together and decodes Bouncy Castle's encoding of its
+  generator, and that the keys of RFC 7836's example 7 lie on 512 paramSetA.
+
+### Compatibility
+
+- Additive only: constants in `named_curves`, and no change to an existing
+  item.
+
 ## 0.1.0 - 2026-10-22
 
 Initial release.

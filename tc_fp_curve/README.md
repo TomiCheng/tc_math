@@ -19,7 +19,7 @@ cryptography, after Bouncy Castle's `FpCurve`, on the Montgomery arithmetic of
 - `FpVarCurve`, `FpVarPoint` — the variable-time set: affine, homogeneous or Jacobian coordinates, wNAF, and GLV on a curve given one.
 - `FpCtPrecomputed`, `FpVarPrecomputed` — `BaseMultiplier`s that keep the curve's own table for a fixed base.
 - `FpError` — a modulus, coefficient or coordinate the field does not take.
-- `named_curves::FpNamedCurve` — named parameters: `SECP256R1` (P-256), `SECP256K1`, and the weak curves of `small-curves`.
+- `named_curves::FpNamedCurve` — named parameters: `SECP256R1` (P-256), `SECP256K1`, the weak curves of `small-curves`, and Bouncy Castle's other tables: Brainpool (`BRAINPOOLP160R1` to `BRAINPOOLP512T1`), GOST R 34.10 (CryptoPro and TC26), X9.62 (`PRIME192V2` to `PRIME239V3`), `FRP256V1` and `WAPIP192V1`.
 
 ## Features
 
