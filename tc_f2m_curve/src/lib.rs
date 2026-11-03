@@ -13,8 +13,9 @@
 //!
 //! [`F2mVarPrecomputed`] is the Var curve's multiplication with its table kept, for a base
 //! that is multiplied again and again, as a verifier's generator is. [`named_curves`] holds
-//! the SEC 2 curves from sect163k1 to sect571r1; the weak sect113 and sect131 curves come
-//! only with the `small-curves` feature, for interoperability.
+//! the SEC 2 curves from sect163k1 to sect571r1, the weak sect113 and sect131 curves only with
+//! the `small-curves` feature, for interoperability, and the binary curves of X9.62 and of the
+//! Ukrainian DSTU 4145.
 //!
 //! Every item states whether it is constant time or variable time. The field arithmetic is
 //! tc_binpoly's: constant time on x86 with PCLMULQDQ; elsewhere its product indexes a table

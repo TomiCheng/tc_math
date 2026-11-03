@@ -11,9 +11,10 @@
 //!   coordinates, wNAF, and GLV on a curve given one. They are variable time, only for
 //!   public values, as when a signature is verified.
 //!
-//! [`named_curves`] holds the SEC 2 parameters of P-256 and secp256k1 and, behind the
-//! `small-curves` feature, of the weak secp112r1, secp112r2 and secp128r2, which serve
-//! interoperability only. [`FpCtPrecomputed`] and [`FpVarPrecomputed`] are the
+//! [`named_curves`] holds the SEC 2 parameters of P-256 and secp256k1, behind the
+//! `small-curves` feature those of the weak secp112r1, secp112r2 and secp128r2, which serve
+//! interoperability only, and the curves of Bouncy Castle's other tables: Brainpool, GOST,
+//! X9.62, ANSSI's FRP256v1 and WAPI's wapip192v1. [`FpCtPrecomputed`] and [`FpVarPrecomputed`] are the
 //! [`BaseMultiplier`](tc_ec_core::multiplier::BaseMultiplier)s that keep a base's table for
 //! the curve's own multiplication. The traits these types implement are in `tc_ec_core`.
 //!
