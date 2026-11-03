@@ -19,7 +19,7 @@ polynomials of `tc_binpoly`, with the field chosen at run time. `no_std` with
 - `F2mVarCurve`, `F2mVarPoint` — the variable-time set: affine, homogeneous or lambda-projective coordinates, wNAF, and the τ-adic NAF on Koblitz curves.
 - `F2mVarPrecomputed` — a `BaseMultiplier` that keeps the Var curve's own table for a fixed base.
 - `F2mError` — a modulus, coefficient or coordinate the field does not take.
-- `named_curves::F2mNamedCurve` — the 18 SEC 2 binary curves, `SECT113R1` to `SECT571R1`, four of them behind `small-curves`.
+- `named_curves::F2mNamedCurve` — the 18 SEC 2 binary curves, `SECT113R1` to `SECT571R1`, four of them behind `small-curves`, the 16 X9.62 binary curves, `C2PNB163V1` to `C2TNB431R1`, and the 10 DSTU 4145 curves, `DSTU4145_163` to `DSTU4145_431`.
 
 ## Features
 

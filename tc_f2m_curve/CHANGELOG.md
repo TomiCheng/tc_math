@@ -2,6 +2,24 @@
 
 All notable changes to `tc_f2m_curve` are documented in this file.
 
+## 0.1.1 - Unreleased
+
+### Added
+
+- The named binary curves of Bouncy Castle's other tables, as
+  `F2mNamedCurve` constants in `named_curves`: X9.62's c2pnb and c2tnb
+  curves, `C2PNB163V1` to `C2TNB431R1`, and the ten curves of the Ukrainian
+  DSTU 4145-2002, which Bouncy Castle names only by OID and which go here by
+  their degree, `DSTU4145_163` to `DSTU4145_431`. None is below 160 bits, so
+  none is behind `small-curves`.
+- A test that each holds together and, for the X9.62 curves, decodes Bouncy
+  Castle's encoding of its generator.
+
+### Compatibility
+
+- Additive only: constants in `named_curves`, and no change to an existing
+  item.
+
 ## 0.1.0 - 2026-10-22
 
 Initial release.
